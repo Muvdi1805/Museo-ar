@@ -1,18 +1,18 @@
 {
   "expo": {
     "name": "Museo AR",
-    "slug": "rn-uninorte-expo-template",
+    "slug": "museo-ar",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "museoar",
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.example.myapp"
+      "bundleIdentifier": "com.muvdi.museoar"
     },
     "android": {
-      "package": "com.example.myapp",
+      "package": "com.muvdi.museoar",
       "adaptiveIcon": {
         "backgroundColor": "#795900",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
