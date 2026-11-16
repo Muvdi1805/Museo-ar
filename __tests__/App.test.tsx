@@ -6,6 +6,7 @@ import App from "../App";
 describe("App", () => {
   it("renders the home screen", async () => {
     render(<App />);
-    expect(await screen.findByText("Home screen...")).toBeTruthy();
+    expect(await screen.findByText("Museo AR 360°")).toBeTruthy();
+    expect(screen.getByText("Entrar al museo")).toBeTruthy();
   });
 });

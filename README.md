@@ -1,10 +1,10 @@
-# rn-uninorte-expo-template
+# Museo AR 360°
 
-Template base para el curso de React Native con Expo (Uninorte).
+Demo de realidad aumentada para Expo Go: obras virtuales flotando a 360° sobre la cámara en vivo, ubicadas con los sensores de movimiento del teléfono. Construida sobre `rn-uninorte-expo-template` (curso de React Native con Expo, Uninorte).
 
 ## Stack
 
-- [Expo SDK 57](https://docs.expo.dev/) · React Native 0.86 · React 19.2
+- [Expo SDK 58](https://docs.expo.dev/) · React Native 0.88 · React 19.3
 - Navegación con [React Navigation 7](https://reactnavigation.org/) (`NavigationContainer`, sin Expo Router)
 - UI con [React Native Paper](https://callstack.github.io/react-native-paper/) (Material 3, tema claro/oscuro)
 - Persistencia local con AsyncStorage
@@ -65,37 +65,55 @@ src/
     RootNavigator.tsx        # Stack raíz + tabs
     types.ts                 # Tipos de rutas y parámetros (navegación tipada)
   features/
-    home/                    # Funcionalidad simple: solo una pantalla
-    notes/                   # Funcionalidad de ejemplo con todas las capas
-      domain/
-        entities/            # Modelos (Note)
-        repositories/        # Interfaces de repositorio (qué se puede hacer)
+    home/                    # Pantalla de inicio con instrucciones de la demo
+    ar-museum/               # Museo AR 360° (todas las capas)
+      domain/                # TypeScript puro: sin React, RN ni Expo
+        entities/            # Artwork (con SpatialPosition), DeviceOrientation
+        repositories/        # IArtworkRepository
+        services/            # ISpatialTracker + spatialProjection (matemática de proyección)
+        usecases/            # Place / GetGallery / Delete / ResetGallery / ObserveOrientation / Recalibrate
       data/
-        datasources/         # Acceso a datos (interfaz + implementación local)
-        repositories/        # Implementación del repositorio
+        datasources/         # AsyncStorage, copia de fotos con expo-file-system, obras de ejemplo
+        repositories/        # ArtworkRepositoryImpl
+        sensors/             # ExpoSensorsSpatialTracker (DeviceMotion de expo-sensors)
       presentation/
-        context/             # Estado de la funcionalidad (NotesProvider, useNotes)
-        screens/             # Pantallas
+        context/             # ArMuseumProvider / useArMuseum (solo casos de uso)
+        hooks/               # Orientación → SharedValues de Reanimated, selector de imágenes
+        components/          # Cámara, marcos flotantes, HUD, radar, ficha técnica
+        screens/             # ArViewerScreen, PlaceArtworkScreen
   theme/                     # Colores claro/oscuro y temas de Paper
 __tests__/                   # Pruebas (unitarias, de pantalla y de flujo)
+  helpers/                   # Dobles de prueba compartidos (Jest no los ejecuta como tests)
 ```
+
+### Museo AR: cómo funciona
+
+- **AR compatible con Expo Go:** la cámara trasera (`expo-camera`) se muestra de fondo y encima flota una capa con los cuadros. `DeviceMotion` (`expo-sensors`) entrega la orientación del teléfono; el adaptador calcula hacia dónde apunta la cámara con la matriz de rotación (evita el *gimbal lock* al sostener el teléfono vertical) y la suaviza con un filtro pasa-bajos.
+- **Proyección:** `domain/services/spatialProjection.ts` convierte el ángulo de cada obra (yaw/pitch) en coordenadas de pantalla con un modelo de cámara estenopeica. La misma función corre en el hilo de UI con Reanimated, así los cuadros se mueven a 60 fps sin re-renderizar React.
+- **Calibración:** al abrir el visor, hacia donde apunta el teléfono es 0°. El botón de la mira recalibra si las obras se desalinean. Si se mueven más rápido o más lento que el mundo real, ajuste `CAMERA_HORIZONTAL_FOV` en `ArViewerScreen.tsx`.
+- **Añadir obras:** «Añadir obra» → elegir foto de la galería o tomarla con la cámara → título y descripción → de vuelta en el visor, apuntar y pulsar «Fijar aquí». La foto se copia al almacenamiento de la app y la galería se guarda en AsyncStorage.
+
+### Usar imágenes propias
+
+- **Desde la app:** cualquier foto de la galería o de la cámara se puede colgar con «Añadir obra». Quedan guardadas entre sesiones.
+- **Como obras precargadas:** reemplace los archivos de `assets/images/ar-museum/` conservando los nombres (`starry-night.jpg`, `great-wave.jpg`, `pearl-earring.jpg`). Para cambiar títulos y posiciones, o agregar más obras, edite `src/features/ar-museum/data/datasources/sampleArtworks.ts` y registre cada imagen nueva en `src/features/ar-museum/presentation/assets/sampleArtworkImages.ts`. Luego use «Reiniciar sala» en la app para cargarlas.
+
+Las obras de ejemplo son pinturas de dominio público obtenidas de Wikimedia Commons: *La noche estrellada* (Van Gogh), *La gran ola de Kanagawa* (Hokusai) y *La joven de la perla* (Vermeer).
 
 ### Reglas de dependencia
 
-- `presentation` → `domain`: las pantallas usan el contexto, y el contexto usa la **interfaz** del repositorio, obtenida con `useDI()`.
+- `presentation` → `domain`: las pantallas usan el contexto, y el contexto usa los **casos de uso**, obtenidos con `useDI()`.
 - `data` → `domain`: las implementaciones cumplen las interfaces del dominio.
 - `domain` no importa nada de `data`, `presentation`, React ni librerías externas.
 - Solo `core/di/appContainer.ts` conoce las clases concretas. Para cambiar el almacenamiento (por ejemplo a un backend remoto) se crea otro data source y se cambia ahí; las pantallas no cambian.
 
 ### Agregar una funcionalidad
 
-1. Copie `src/features/notes/` con el nuevo nombre y defina la entidad y la interfaz del repositorio en `domain/`.
-2. Implemente el data source y el repositorio en `data/`.
+1. Tome `src/features/ar-museum/` como referencia y defina entidades, interfaces y casos de uso en `domain/`.
+2. Implemente data sources y repositorios en `data/`.
 3. Agregue sus tokens en `tokens.ts` y regístrelos en `appContainer.ts`.
 4. Cree el provider y las pantallas en `presentation/`; agregue el provider en `App.tsx` y las rutas en `navigation/types.ts` y `RootNavigator.tsx`.
-5. Para probar pantallas sin almacenamiento real, pase un contenedor con dobles de prueba: `<DIProvider container={...}>` (ver `__tests__/features/notes/NoteListScreen.test.tsx`).
-
-La funcionalidad `notes` es solo un ejemplo: puede borrarla (carpeta, tokens, registro en `appContainer.ts`, provider, rutas y pruebas) cuando ya no la necesite.
+5. Para probar pantallas sin almacenamiento real, pase un contenedor con dobles de prueba: `<DIProvider container={...}>` (ver `__tests__/features/ar-museum/ArViewerScreen.test.tsx`).
 
 ## Compilar la app nativa
 

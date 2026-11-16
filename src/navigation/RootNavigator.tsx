@@ -3,9 +3,9 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 
+import ArViewerScreen from "../features/ar-museum/presentation/screens/ArViewerScreen";
+import PlaceArtworkScreen from "../features/ar-museum/presentation/screens/PlaceArtworkScreen";
 import HomeScreen from "../features/home/HomeScreen";
-import AddNoteScreen from "../features/notes/presentation/screens/AddNoteScreen";
-import NoteListScreen from "../features/notes/presentation/screens/NoteListScreen";
 import { RootStackParamList, TabParamList } from "./types";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -18,15 +18,18 @@ function Tabs() {
         name="Home"
         component={HomeScreen}
         options={{
+          title: "Inicio",
           tabBarIcon: ({ color, size }) => <MaterialCommunityIcons name="home" color={color} size={size} />,
         }}
       />
       <Tab.Screen
-        name="Notes"
-        component={NoteListScreen}
+        name="ArMuseum"
+        component={ArViewerScreen}
         options={{
+          title: "Museo AR",
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="note-text-outline" color={color} size={size} />
+            <MaterialCommunityIcons name="rotate-3d-variant" color={color} size={size} />
           ),
         }}
       />
@@ -39,9 +42,9 @@ export default function RootNavigator() {
     <Stack.Navigator>
       <Stack.Screen name="Tabs" component={Tabs} options={{ headerShown: false }} />
       <Stack.Screen
-        name="AddNote"
-        component={AddNoteScreen}
-        options={{ title: "New note", presentation: "modal" }}
+        name="PlaceArtwork"
+        component={PlaceArtworkScreen}
+        options={{ title: "Nueva obra", presentation: "modal" }}
       />
     </Stack.Navigator>
   );

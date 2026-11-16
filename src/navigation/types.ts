@@ -3,13 +3,13 @@ import { NavigatorScreenParams } from "@react-navigation/native";
 // Screens inside the bottom tabs.
 export type TabParamList = {
   Home: undefined;
-  Notes: undefined;
+  ArMuseum: undefined;
 };
 
-// Screens in the root stack. Add params here, e.g. EditNote: { id: string }.
+// Screens in the root stack. Add params here, e.g. ArtworkDetail: { id: string }.
 export type RootStackParamList = {
   Tabs: NavigatorScreenParams<TabParamList>;
-  AddNote: undefined;
+  PlaceArtwork: undefined;
 };
 
 // Makes useNavigation() / navigation.navigate() type-checked across the app.

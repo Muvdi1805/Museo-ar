@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "rn-uninorte-expo-template",
+    "name": "Museo AR",
     "slug": "rn-uninorte-expo-template",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -41,7 +41,26 @@
       "expo-web-browser",
       "expo-font",
       "expo-image",
-      "expo-status-bar"
+      "expo-status-bar",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "El museo AR usa la cámara trasera para mostrar las obras sobre el mundo real."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Permite elegir fotos de tu galería para colgarlas en el museo AR.",
+          "cameraPermission": "Permite tomar fotos para colgarlas en el museo AR."
+        }
+      ],
+      [
+        "expo-sensors",
+        {
+          "motionPermission": "El museo AR usa los sensores de movimiento para ubicar las obras a tu alrededor."
+        }
+      ]
     ],
     "experiments": {
       "reactCompiler": true

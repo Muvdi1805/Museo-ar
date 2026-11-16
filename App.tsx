@@ -9,7 +9,7 @@ import { PaperProvider } from "react-native-paper";
 
 
 import { DIProvider } from "./src/core/di/DIProvider";
-import { NotesProvider } from "./src/features/notes/presentation/context/NotesContext";
+import { ArMuseumProvider } from "./src/features/ar-museum/presentation/context/ArMuseumContext";
 import RootNavigator from "./src/navigation/RootNavigator";
 import { darkTheme, lightTheme } from "./src/theme/theme";
 
@@ -71,13 +71,13 @@ export default function App() {
 
   return (
     <DIProvider>
-      <NotesProvider>
+      <ArMuseumProvider>
         <PaperProvider theme={theme}>
           <NavigationContainer theme={navigationTheme}>
             <RootNavigator />
           </NavigationContainer>
         </PaperProvider>
-      </NotesProvider>
+      </ArMuseumProvider>
     </DIProvider>
   );
 }
