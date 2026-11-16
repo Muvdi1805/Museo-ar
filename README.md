@@ -4,10 +4,10 @@ Aplicación móvil de realidad aumentada para Expo Go: una galería de obras vir
 
 ## Grupo
 
-- **Grupo N.º:** 
+- **Grupo N.9º:** 
 - **Integrantes:**
-  - 
-  - 
+  - Nicolas Muvdi
+  - Juan José Bolívar
 
 ## Funcionalidades
 
